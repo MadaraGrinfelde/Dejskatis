@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Datu ielāde{% endblock %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background-color: #f1f8e9;
+            color: #2e7d32;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            background-color: #388e3c;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .form-container {
+            text-align: center;
+            margin: 20px auto;
+        }
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #2e7d32;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #388e3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2e7d32;
+        }
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #e8f5e9;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #2e7d32;
+            text-align: left;
+        }
+        th {
+            background-color: #388e3c;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #c8e6c9;
+        }
+        tr:nth-child(odd) {
+            background-color: #f1f8e9;
+        }
+        .nav-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav-link a {
+            text-decoration: none;
+            color: white;
+            background-color: #388e3c;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .nav-link a:hover {
+            background-color: #2e7d32;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Datu ielāde</h1>
+
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            <label for="csv_file">Select CSV File:</label>
+            <input type="file" id="csv_file" name="csv_file" accept=".csv">
+            <br><br>
+            <button type="submit">Ielādēt datus</button>
+        </form>
+    </div>
+
+{% endblock %}

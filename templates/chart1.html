@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Interaktīva Plotly diagramma{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Work Sans', sans-serif;
+        background-color: #f1f8e9;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #388e3c;
+    }
+
+    .chart-container {
+        background-color: #c3e6cb;
+        border: 1px solid #38b000;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 1200px;
+    }
+</style>
+
+<h1>Interaktīva <i>Plotly</i> diagramma</h1>
+<div class="chart-container">
+    <div>{{ chart|safe }}</div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Flask App{% endblock %}</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+
+        nav {
+            background-color: #388e3c; 
+            padding: 10px;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #38b000;
+        }
+
+        footer {
+            background-color: #388e3c; 
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: floating;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Rezultāti</a> |
+        <a href="/chart">Plotly histogramma</a> |
+        <a href="/chart2">Matplotlib histogramma</a> |
+        <a href="/dataimport">Importēt datus</a>
+    </nav>
+    <hr>
+
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+    <footer>
+        <p>&copy; 2025 Dejskatis. Visas tiesības aizsargātas.</p>
+    </footer>
+</body>
+</html>
+

@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block title %}2023. gada Rīgas tautas deju skašu rezultāti{% endblock %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background-color: #f1f8e9;
+            color: #2e7d32;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            background-color: #388e3c;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .dropdown {
+            position: relative;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f8e9;
+            border: 1px solid #2e7d32;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content label {
+            display: block;
+            margin: 5px 0;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chart-button {
+            display: block;
+            margin: 20px 20px 20px auto;;
+            background-color: #388e3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .chart-button:hover {
+            background-color: #2e7d32;
+        }
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+            background-color: #e8f5e9;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #2e7d32;
+            text-align: left;
+        }
+        th {
+            background-color: #388e3c;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #c8e6c9;
+        }
+        tr:nth-child(odd) {
+            background-color: #f1f8e9;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            max-width: 80%;
+        }
+        .separator {
+        margin: 20px auto;
+        width: 80%;
+        height: 2px;
+        background-color: #388e3c;
+        }
+        .nav-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav-link a {
+            text-decoration: none;
+            color: white;
+            background-color: #388e3c;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .nav-link a:hover {
+            background-color: #2e7d32;
+        }
+        .filter-section {
+        background-color: #c3e6cb;
+        padding: 20px;
+        margin: 20px;
+        border-radius: 10px;
+        border: 1px solid #38b000;
+    }
+
+    .filter-section form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .filter-section label, .filter-section input, .filter-section button, .filter-section a {
+        font-size: 14px;
+        margin: 5px;
+        padding: 8px;
+    }
+
+    .filter-section button {
+        background-color: #388e3c;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .filter-section button:hover {
+        background-color: #2e8b00;
+    }
+
+    .filter-section a {
+        color: #388e3c;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .filter-section a:hover {
+        text-decoration: underline;
+    }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"></script>
+</head>
+<body>
+    <h1>2023. gada Rīgas tautas deju skašu rezultāti </h1>
+
+
+    <div class="filter-section">
+        <form method="get" action="/">
+            <div>
+                <label for="nosaukums">Meklēt:</label>
+                <input type="text" id="nosaukums" name="nosaukums" value="{{ filters.nosaukums or '' }}">
+            </div>
+
+            <div class="dropdown">
+                <span>Kvalitātes grupa</span>
+                <div class="dropdown-content">
+                    <label>
+                        <input type="checkbox" id="checkAllkvalitates_grupa" onclick="toggleCheckAll('kvalitates_grupa')"> Visi
+                    </label>
+                    {% for grupa in kvalitates_grupas %}
+                    <label>
+                        <input type="checkbox" name="kvalitates_grupa" value="{{ grupa }}" {% if grupa in filters.kvalitates_grupa %}checked{% endif %}>
+                        {{ grupa }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>Vadītājs</span>
+                <div class="dropdown-content">
+                    <label>
+                        <input type="checkbox" id="checkAllvaditajs" onclick="toggleCheckAll('vaditajs')"> Visi
+                    </label>
+                    {% for vaditajs in vaditaji %}
+                    <label>
+                        <input type="checkbox" name="vaditajs" value="{{ vaditajs }}" {% if vaditajs in filters.vaditajs %}checked{% endif %}>
+                        {{ vaditajs }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <span>Piezīmes</span>
+                <div class="dropdown-content">
+                    <label>
+                        <input type="checkbox" id="checkAllpiezimes_lemums" onclick="toggleCheckAll('piezimes_lemums')"> Visi
+                    </label>
+                    {% for piezime in piezimes %}
+                    <label>
+                        <input type="checkbox" name="piezimes_lemums" value="{{ piezime }}" {% if piezime in filters.piezimes_lemums %}checked{% endif %}>
+                        {{ piezime }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <label for="sliderMin">Vērtējums no:</label>
+                <input 
+                    type="range" 
+                    id="sliderMin" 
+                    name="gala_vert_min" 
+                    min="0" 
+                    max="65" 
+                    step="1" 
+                    value="{{ filters.gala_vert_min or '0' }}" 
+                    oninput="updateSliderValue('sliderValueMin', this.value)">
+                <span id="sliderValueMin">{{ filters.gala_vert_min or '0' }}</span>
+            
+                <label for="sliderMax">Līdz:</label>
+                <input 
+                    type="range" 
+                    id="sliderMax" 
+                    name="gala_vert_max" 
+                    min="0" 
+                    max="65" 
+                    step="1" 
+                    value="{{ filters.gala_vert_max or '65' }}" 
+                    oninput="updateSliderValue('sliderValueMax', this.value)">
+                <span id="sliderValueMax">{{ filters.gala_vert_max or '65' }}</span>
+            </div>
+
+            <button type="submit">Filtrēt</button>
+            <a href="/">Notīrīt filtrus</a>
+            
+        </form>
+        
+    </div>
+    <button class="chart-button" onclick="fetchCharts(); scrollToCharts();">Rādīt diagrammas</button>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Uzstāšanās Nr.</th>
+            <th>Kolektīva Nosaukums</th>
+            <th>Vadītājs</th>
+            <th>Kvalitātes Grupa</th>
+            <th>Gala Vērtējums (punkti)</th>
+            <th>Piezīmes</th>
+        </tr>
+        {% for item in kolektivs %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.uzstasanas_nr }}</td>
+            <td>{{ item.nosaukums }}</td>
+            <td>{{ item.vaditajs }}</td>
+            <td>{{ item.kvalitates_grupa }}</td>
+            <td>{{ item.gala_vert_punkti }}</td>
+            <td>{{ item.piezimes_lemums }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div id="chartSection">
+        <div class="separator"></div>
+
+        <canvas id="histogram"></canvas>
+        
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <script>
+        async function fetchCharts() {
+            const sliderMin = document.getElementById('sliderMin');
+            const sliderMax = document.getElementById('sliderMax');
+
+            const galaVertMin = sliderMin ? sliderMin.value : 0;
+            const galaVertMax = sliderMax ? sliderMax.value : 65;
+
+            const response = await fetch('/charts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    kvalitates_grupa: Array.from(document.querySelectorAll("input[name='kvalitates_grupa']:checked")).map(el => el.value),
+                    vaditajs: Array.from(document.querySelectorAll("input[name='vaditajs']:checked")).map(el => el.value),
+                    piezimes_lemums: Array.from(document.querySelectorAll("input[name='piezimes_lemums']:checked")).map(el => el.value),
+                    gala_vert_min: galaVertMin,
+                    gala_vert_max: galaVertMax
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to fetch chart data:', response.statusText);
+                return;
+            }
+
+            const data = await response.json();
+
+            const histogramCtx = document.getElementById('histogram').getContext('2d');
+            new Chart(histogramCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.kval_grupa_count),
+                    datasets: [{
+                        label: 'Kvalitātes Grupas Skaits',
+                        data: Object.values(data.kval_grupa_count),
+                        backgroundColor: 'green'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    }
+                }
+            });
+
+            const pieChartCtx = document.getElementById('pieChart').getContext('2d');
+            new Chart(pieChartCtx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(data.piezimes_count),
+                    datasets: [{
+                        label: 'Piezīmes / Lēmumi',
+                        data: Object.values(data.piezimes_count),
+                        backgroundColor: ['#66bb6a', '#388e3c', '#1b5e20']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    }
+                }
+            });
+
+            document.getElementById("chartSection").scrollIntoView({ behavior: "smooth" });
+        }
+    </script>
+    <script>
+        function scrollToCharts() {
+            const chartSection = document.getElementById("chartSection");
+            if (chartSection) {
+                chartSection.scrollIntoView({ behavior: "smooth" });
+            } else {
+                console.error("Chart section not found.");
+            }
+        }
+    </script>
+
+    <script>
+        function updateSliderValue(elementId, value) {
+            const displayElement = document.getElementById(elementId);
+            if (displayElement) {
+                displayElement.textContent = value;
+            } else {
+                console.error(`Element with ID '${elementId}' not found.`);
+            }
+        }
+    </script>
+
+    <script>
+        function toggleCheckAll(filterName) {
+            const checkAllBox = document.getElementById(`checkAll${(filterName)}`);
+            const checkboxes = document.querySelectorAll(`input[name='${filterName}']`);
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = checkAllBox.checked;
+            });
+        }
+
+
+    </script>
+
+    
+{% endblock %}
